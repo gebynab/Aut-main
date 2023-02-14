@@ -1,11 +1,4 @@
 #!/bin/bash
 set -ex
-Version='52.9.0esr'
-Arch='linux-x86_64'
-Lang='en-US'
-File='firefox-52.9.0esr.tar.bz2'
-cd ~
-wget http://ftp.mozilla.org/pub/firefox/releases/$Version/$Arch/$Lang/$File 
-tar --extract --bzip2 --file=$File
-cd firefox
-./firefox
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install ./google-chrome-stable_current_amd64.deb
