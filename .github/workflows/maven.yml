@@ -13,13 +13,11 @@ jobs:
     - name: Checkout the repo
       uses: actions/checkout@v3
     - name: Buidling container
-      run : docker build -t my-apache2
+      run : docker build -t my-apache2 .
     - name: run docker
       run : docker run -d -p 80:80 --name docker-apache -d my-apache2
     - name : check server
       run : curl http://localhost:80
-    - name : stop docker
-      run : docker stop docker-apache
     - name: Install Google Chrome
       run:  |
             chmod +x ./scripts/InstallChrome.sh
@@ -41,3 +39,5 @@ jobs:
       run: |
            cd ./SeleniumTry
            mvn test
+    - name : stop docker
+      run : docker stop docker-apache
