@@ -1,35 +1,29 @@
 #!/bin/bash
-# Download & Install Latest Version of Firefox - 10/4/2016
-# Will Only Install if Firefox is not Already in the Applications Folder
-# Version 2.0
 
-# Set Variables
-fireFoxURL="http://download.mozilla.org/?product=firefox-latest&os=osx&lang=en-US"
-fireFox="/tmp/firefox.dmg"
-currentUser=$(stat -f "%Su" /dev/console)
+# Install Firefox Web Browser from Mozilla's latest builds
+# URL: https://gitlab.com/e33io/scripts/-/blob/main/install-firefox.sh
+# Use this script at your own risk, it will overwrite existing files!
+# Run this script as a normal user (not as root user)
+# This method is for the current user only, and will auto-update
 
-# Check Connection to https://www.mozilla.org
-/usr/bin/curl -D- -o /dev/null -s https://www.mozilla.org
-if [[ $? != 0 ]]; then
-	echo "mozilla.org not Reachable, Check Internet Connection"
-	exit $?
-# Check if Firefox is Already Installed, If not Installation will Continue
-	elif [ -e /Applications/Firefox.app ]; then
-			echo "FireFox Already Present, Skiping Installation"
-			exit 1
-		else
-			echo "Firefox not found, Downloading & Installing"
-			/usr/bin/curl -L -o "$fireFox" "$fireFoxURL"
-			mount=`/usr/bin/mktemp -d /tmp/Firefox`
-			/usr/bin/hdiutil attach "$fireFox" -mountpoint "$mount" -nobrowse -noverify -noautoopen
-			cp -R /private/tmp/Firefox/Firefox.app /Applications/
-			/bin/sleep 1
-# Cleanup Temp Files & Mounts, Add Permissions for Current User
-			/usr/bin/hdiutil detach "$mount"
-			/bin/rm -R /private/tmp/Firefox
-			/bin/rm -rf "$fireFox"
-			/bin/sleep 1
-			/bin/chmod -R +a "$currentUser allow read,write,delete" /Applications/Firefox.app
-			echo "Firefox Installed Successfully"
-			exit 0
-fi
+mkdir -p $HOME/.local/applications
+mkdir -p $HOME/.local/share/applications
+
+wget -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
+
+tar -xf firefoxsetup.tar.bz2 --directory $HOME/.local/applications
+
+echo "[Desktop Entry] 
+Name=Firefox
+GenericName=Web Browser
+Comment=Browse the Web
+Exec=/home/$(whoami)/.local/applications/firefox/firefox %u
+Icon=firefox
+Terminal=false
+Type=Application
+MimeType=text/html;text/xml;application/xhtml+xml;application/vnd.mozilla.xul+xml;text/mml;x-scheme-handler/http;x-scheme-handler/https;
+Categories=Network;WebBrowser;
+Keywords=web;browser;internet;
+StartupNotify=true" > $HOME/.local/share/applications/firefox.desktop
+
+sudo ln -s $HOME/.local/applications/firefox/firefox /usr/local/bin/firefox
