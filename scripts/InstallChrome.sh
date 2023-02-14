@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ex
 Version='52.9.0esr'
 Arch='linux-x86_64'
 Lang='en-US'
